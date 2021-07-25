@@ -1,42 +1,33 @@
 #include<stdio.h>
-#include<string.h>
 
-int getMax(int a, int b, int c) {
-	if (a >= b && a >= c) return a;
-	else if (b >= a && b >= c) return b;
-	else return c;
+int MAX(int a, int b) {
+    return a > b ? a : b;
+}//a와 b 중 더 큰 것을 반환
+
+int solution(int n, int *arr) {
+	int dp[30001] = { 0, };//dp 배열 선언 및 배열 전체를 0으로 초기화
+	dp[1] = arr[1];//1인 경우 초기화
+	dp[2] = arr[1] + arr[2];//2인 경우 초기화
+	for (int i = 3; i <= n; i++) {
+		dp[i] = MAX(dp[i - 2] + arr[i], MAX(dp[i - 3] + arr[i - 1] + arr[i], dp[i - 1]));
+		/*
+		dp[i] : i번째까지 주웠을 때 최대로 주울 수 있는 돈
+		1. dp[i - 2] + money[i]
+		2. dp[i - 3] + money[i-1]+ money[i]
+		3. dp[i - 1]
+		중 최댓값을 dp[i]에 저장함.
+		*/
+	}//3부터 n 까지 dp값을 계산
+	return dp[n];
 }
 
 int main() {
 	int n;
 	scanf("%d", &n);
-	int money[30000];
+	int money[30001] = { 0, };//money 배열 선언 및 배열 전체를 0으로 초기화
 	for (int i = 1; i <= n; i++) {
 		scanf("%d", &money[i]);
-	}
-	int dp[30001];
-	int max = 0;
-	dp[0] = 0;
-	if (n >= 1) {
-		dp[1] = money[1];
-		if (max < dp[1]) max = dp[1];
-		printf("getMax: %d\n", dp[1]);
-	}
-	if (n >= 2) {
-		dp[2] = money[1] + money[2];
-		if (max < dp[2]) max = dp[2];
-		printf("getMax: %d\n", dp[2]);
-	}
-	if (n >= 3) {
-		dp[3] = getMax(money[1] + money[2], money[1] + money[3], money[2] + money[3]);
-		if (max < dp[3]) max = dp[3];
-		printf("getMax: %d\n", dp[3]);
-	}
-	for (int i = 4; i <= n; i++) {
-		dp[i] = getMax(dp[i - 1], dp[i - 2] + money[i], dp[i - 3] + money[i - 1] + money[i]);
-		printf("getMax: %d\n", dp[i]);
-		if (max < dp[i]) max = dp[i];
-	}
-	printf("%d\n", max);
-	
+	}//money 배열에 입력 받음
+
+	printf("%d\n", solution(n, money));//최댓값 출력
 }
